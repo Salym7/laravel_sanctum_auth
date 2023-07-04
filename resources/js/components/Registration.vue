@@ -6,7 +6,7 @@
                 type="text"
                 id="name"
                 placeholder="name"
-                class="form-control mb-2"
+                class="form-control mb-2 mt-2"
             />
             <input
                 v-model="email"
@@ -31,7 +31,7 @@
             />
             <input
                 type="submit"
-                id="password"
+                id="button"
                 value="login"
                 class="btn btn-primary w-100"
                 @click.prevent="register"
@@ -62,10 +62,14 @@ export default {
                         password_confirmation: this.password_confirmation,
                     })
                     .then((res) => {
-                        console.log(res)
+                        localStorage.setItem(
+                            "x_xsrf_token",
+                            res.config.headers["X-XSRF-TOKEN"]
+                        )
+                        this.$router.push({ name: "user.personal" })
                     })
                     .catch((err) => {
-                        console.log(err.response)
+                        // console.log(err.response)
                     })
             })
         },

@@ -6,7 +6,7 @@
                 type="email"
                 id="email"
                 placeholder="email"
-                class="form-control mb-2"
+                class="form-control mb-2 mt-2"
             />
             <input
                 v-model="password"
@@ -17,7 +17,7 @@
             />
             <input
                 type="submit"
-                id="password"
+                id="button"
                 value="login"
                 class="btn btn-primary w-100"
                 @click.prevent="login"
@@ -35,9 +35,6 @@ export default {
         }
     },
 
-    mounted() {
-        console.log("Component mounted.")
-    },
     methods: {
         login() {
             axios.get("/sanctum/csrf-cookie").then((response) => {
@@ -47,7 +44,11 @@ export default {
                         password: this.password,
                     })
                     .then((res) => {
-                        console.log(res)
+                        localStorage.setItem(
+                            "x_xsrf_token",
+                            res.config.headers["X-XSRF-TOKEN"]
+                        )
+                        this.$router.push({ name: "user.personal" })
                     })
                     .catch((err) => {
                         console.log(err.response)

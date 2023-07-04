@@ -1,27 +1,48 @@
 <template>
     <div class="container p-4">
         <router-link class="me-3" :to="{ name: 'get.index' }">Get</router-link>
-        <router-link class="me-3" :to="{ name: 'user.login' }"
+        <router-link v-if="!token" class="me-3" :to="{ name: 'user.login' }"
             >Login</router-link
         >
-        <router-link class="me-3" :to="{ name: 'user.registration' }"
+        <router-link
+            v-if="!token"
+            class="me-3"
+            :to="{ name: 'user.registration' }"
             >Register</router-link
         >
-        <a href="#" @click.prevent="logout">Logout</a>
-        <router-view></router-view>
+        <router-link v-if="token" class="me-3" :to="{ name: 'user.personal' }"
+            >Personal</router-link
+        >
+        <a v-if="token" href="#" @click.prevent="logout">Logout</a>
+        <router-view :key="$route.fullPath"></router-view>
     </div>
 </template>
 
 <script>
 export default {
-    mounted() {
-        console.log("Component mounted.")
+    data() {
+        return {
+            token: null,
+        }
     },
+
+    mounted() {
+        this.getToken()
+    },
+    updated() {
+        this.getToken()
+    },
+
     methods: {
+        getToken() {
+            this.token = localStorage.getItem("x_xsrf_token")
+        },
+
         logout() {
-            axios
-                .post("/logout")
-                .then(this.$router.push({ name: "user.login" }))
+            axios.post("/logout").then((res) => {
+                localStorage.removeItem("x_xsrf_token")
+                this.$router.push({ name: "user.login" })
+            })
         },
     },
 }
